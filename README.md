@@ -8,6 +8,8 @@ speech-to-speech `LLMService`. It receives live audio or text, manages the
 conversation, calls tools, and streams audio or text responses. A voice
 pipeline does not need separate STT, LLM, and TTS services.
 
+This integration is built and maintained by the Boson AI team.
+
 ## Prerequisites
 
 * Python 3.11 or newer.
@@ -50,6 +52,8 @@ uv add --editable ../pipecat-boson
 ```
 
 The package supports `pipecat-ai>=1.4.0,<2`.
+
+Tested with Pipecat v1.6.0.
 
 ## Configure the connection
 
