@@ -317,7 +317,7 @@ Optional session settings supported by Higgs Realtime:
 | `voice` | `"default"` | Voice preset or voice ID used for audio output. |
 | `instructions` | Helpful assistant prompt | System instructions used to initialize the conversation. |
 | `output_modalities` | `["audio"]` | Exactly `["audio"]` or `["text"]`. |
-| `temperature` | `0.7` | Sampling temperature used for model responses. |
+| `temperature` | Not set | Optional sampling temperature. When omitted, the server default is used. |
 | `max_output_tokens` | `"inf"` | Maximum response tokens. Numeric values are capped at `4096`. |
 | `tools` | Not set | Python functions or Pipecat-compatible tool definitions. |
 | `tool_choice` | `"auto"` | Tool selection behavior used when tools are available. |
