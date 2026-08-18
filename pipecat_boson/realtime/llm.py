@@ -132,7 +132,7 @@ class BosonRealtimeLLMService(OpenAIRealtimeLLMService):
         voice: str = "default",
         instructions: str = "You are a helpful AI assistant.",
         output_modalities: list[Literal["text", "audio"]] | None = None,
-        temperature: float = 0.7,
+        temperature: float | None = None,
         max_output_tokens: int | Literal["inf"] = "inf",
         tools: Any = UNSET,
         tool_choice: Any = "auto",
@@ -156,7 +156,8 @@ class BosonRealtimeLLMService(OpenAIRealtimeLLMService):
             instructions: System instructions for the realtime session.
             output_modalities: Exactly one output modality, either
                 ``["audio"]`` or ``["text"]``. Defaults to audio.
-            temperature: Sampling temperature sent to Boson.
+            temperature: Optional sampling temperature sent to Boson. Omit it to
+                use the server default.
             max_output_tokens: Maximum output tokens, or ``"inf"``.
             tools: Optional tools to advertise in ``session.update``.
             tool_choice: OpenAI-compatible tool choice value.
@@ -867,8 +868,8 @@ class BosonRealtimeLLMService(OpenAIRealtimeLLMService):
             return self._settings.system_instruction
         return self._boson_instructions
 
-    def _current_temperature(self) -> float:
-        if is_given(self._settings.temperature) and self._settings.temperature is not None:
+    def _current_temperature(self) -> float | None:
+        if is_given(self._settings.temperature):
             return self._settings.temperature
         return self._boson_temperature
 

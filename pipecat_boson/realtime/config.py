@@ -141,7 +141,7 @@ def build_session_update_payload(
     voice: str,
     instructions: str,
     output_modalities: list[str],
-    temperature: float,
+    temperature: float | None,
     max_output_tokens: int | Literal["inf"],
     tool_choice: Any,
     tools: list[dict[str, Any]] | None,
@@ -180,9 +180,10 @@ def build_session_update_payload(
             },
             "tools": tools or [],
             "tool_choice": tool_choice_to_boson(tool_choice),
-            "temperature": temperature,
             "max_output_tokens": normalize_max_output_tokens(max_output_tokens),
             "truncation": truncation,
         },
     }
+    if temperature is not None:
+        payload["session"]["temperature"] = temperature
     return payload

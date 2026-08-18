@@ -258,14 +258,14 @@ async def test_pipecat_aggregator_tool_result_is_encoded_once_on_boson_wire():
 
 
 @pytest.mark.asyncio
-async def test_session_update_uses_default_model_temperature():
+async def test_session_update_omits_unspecified_temperature():
     service = CapturingBosonRealtimeLLMService()
 
     await service._send_session_update()
 
     payload = service.sent[-1]
     assert payload["type"] == "session.update"
-    assert payload["session"]["temperature"] == 0.7
+    assert "temperature" not in payload["session"]
     assert payload["session"]["audio"]["output"]["speed"] == 1.0
 
 

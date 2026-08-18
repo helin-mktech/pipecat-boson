@@ -113,10 +113,31 @@ def test_build_session_update_payload_matches_openai_compatible_subset():
     assert session["audio"]["input"]["transcription"] == {"model": "whisper-1"}
     assert session["truncation"] == "disabled"
     assert session["max_output_tokens"] == 4096
+    assert session["temperature"] == 0.7
     assert "states" not in session
     assert "scripted_response" not in session
     assert "model" not in session["audio"]["output"]
     assert "temperature" not in session["audio"]["output"]
+
+
+def test_build_session_update_payload_omits_unspecified_temperature():
+    payload = build_session_update_payload(
+        event_id="evt_1",
+        model="higgs-realtime",
+        voice="voice_123",
+        instructions="Be brief.",
+        output_modalities=["audio"],
+        temperature=None,
+        max_output_tokens="inf",
+        tool_choice="auto",
+        tools=None,
+        speed=1.0,
+        turn_detection=None,
+        input_audio_transcription=UNSET,
+        input_audio_noise_reduction=UNSET,
+    )
+
+    assert "temperature" not in payload["session"]
 
 
 def test_build_session_update_payload_can_omit_or_clear_noise_reduction():
