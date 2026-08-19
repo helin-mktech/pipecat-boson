@@ -496,7 +496,6 @@ async def test_audio_transcript_length_event_is_forwarded_as_rtvi_server_message
         "content_index": 0,
         "delta": "Hello",
         "length_ms": 320,
-        "metadata": {"source": "test"},
     }
 
     should_continue = await service._dispatch_boson_server_event(event)
