@@ -300,6 +300,44 @@ transport automatically.
 Keep `on_session_created` handlers fast. Session setup waits for this handler
 to return.
 
+## Receive audio transcript timing in RTVI clients
+
+Higgs Realtime emits `response.output_audio_transcript.length` events that pair
+a transcript delta with the duration of its generated audio. The integration
+forwards each event unchanged as an `RTVIServerMessageFrame`, so applications
+do not need to register a service event handler or manually send an RTVI
+message.
+
+Configure the server-side worker with an RTVI observer:
+
+```python
+from pipecat.processors.frameworks.rtvi import RTVIObserverParams
+
+worker = PipelineWorker(
+    pipeline,
+    rtvi_observer_params=RTVIObserverParams(),
+)
+```
+
+The web client receives a standard RTVI `server-message` whose `data` contains
+the original event:
+
+```json
+{
+  "event_id": "event_123",
+  "type": "response.output_audio_transcript.length",
+  "response_id": "response_123",
+  "item_id": "item_123",
+  "output_index": 0,
+  "content_index": 0,
+  "delta": "Hello",
+  "length_ms": 320
+}
+```
+
+Workers created with `enable_rtvi=False` do not forward these messages to an
+RTVI client.
+
 ## Supported Higgs Realtime options
 
 Connection options:
