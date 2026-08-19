@@ -300,43 +300,39 @@ transport automatically.
 Keep `on_session_created` handlers fast. Session setup waits for this handler
 to return.
 
-## Receive audio transcript timing in RTVI clients
+## Boson-specific server events
 
-Higgs Realtime emits `response.output_audio_transcript.length` events that pair
-a transcript delta with the duration of its generated audio. The integration
-forwards each event unchanged as an `RTVIServerMessageFrame`, so applications
-do not need to register a service event handler or manually send an RTVI
-message.
+The integration converts OpenAI-compatible realtime events into standard
+Pipecat frames. It forwards the following Boson-specific events, which do not
+have corresponding Pipecat frames, unchanged to web clients as RTVI
+`server-message` data:
 
-Configure the server-side worker with an RTVI observer:
+| Event | Description |
+| --- | --- |
+| `response.output_audio_transcript.length` | Associates the transcript fragment in `delta` with its generated audio duration in milliseconds (`length_ms`). The event also includes `event_id`, `response_id`, `item_id`, `output_index`, and `content_index`. |
 
-```python
-from pipecat.processors.frameworks.rtvi import RTVIObserverParams
+Receive these events with the Pipecat Web Client SDK's `onServerMessage`
+callback:
 
-worker = PipelineWorker(
-    pipeline,
-    rtvi_observer_params=RTVIObserverParams(),
-)
+```javascript
+import { PipecatClient } from "@pipecat-ai/client-js";
+
+const client = new PipecatClient({
+  transport,
+  callbacks: {
+    onServerMessage: (event) => {
+      if (event?.type === "response.output_audio_transcript.length") {
+        console.log(event.delta, event.length_ms);
+      }
+    },
+  },
+});
 ```
 
-The web client receives a standard RTVI `server-message` whose `data` contains
-the original event:
-
-```json
-{
-  "event_id": "event_123",
-  "type": "response.output_audio_transcript.length",
-  "response_id": "response_123",
-  "item_id": "item_123",
-  "output_index": 0,
-  "content_index": 0,
-  "delta": "Hello",
-  "length_ms": 320
-}
-```
-
-Workers created with `enable_rtvi=False` do not forward these messages to an
-RTVI client.
+No Boson service event handler or manual call to `send_server_message()` is
+required in the bot application. The server-side `PipelineWorker` must have
+RTVI enabled; workers created with `enable_rtvi=False` do not send these events
+to web clients.
 
 ## Supported Higgs Realtime options
 
